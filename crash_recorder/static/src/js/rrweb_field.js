@@ -32,15 +32,12 @@ odoo.define('crash_recorder.rrweb_field', function (require) {
          */
         init: function () {
             this._super.apply(this, arguments);
-            console.log("Hi from rrweb field!");
         },
 
         /**
          * @override
          */
         _render: function () {
-            // debugger;
-            console.log('rendering rrweb');
             setTimeout(() => { // TODO
                 fetch(`/web/content/rrweb.recording/${this.recordData.id}/events`)
                     .then((response) => response.json())
@@ -54,7 +51,6 @@ odoo.define('crash_recorder.rrweb_field', function (require) {
                         });
                     });
             }, 2000);
-            // this.$el.empty().append($("<span/>").addClass('fa fa-download'));
         }
     });
 
