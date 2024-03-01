@@ -18,17 +18,26 @@
     "name": "Crash Recorder",
     "category": "Tools",
     "summary": "Automatically record user actions leading to errors.",
-    "version": "14.0.1.0.1",
+    "version": "15.0.1.0.0",
     "depends": ["web"],
     "data": [
         "views/rrweb_recording_views.xml",
-        "views/crash_recorder_templates.xml",
         "security/ir.model.access.csv",
     ],
-    "qweb": [
-        "static/src/xml/rrweb_field.xml",
-        "static/src/xml/crash_recorder_systray.xml",
-    ],
-    "author": "Joren Van Onder",
+    "assets": {
+        "web.assets_backend": [
+            "crash_recorder/static/lib/rrweb/js/rrweb-all.min.js",
+            "crash_recorder/static/src/js/rrweb.js",
+            "crash_recorder/static/lib/rrweb/css/style.min.css",
+            "crash_recorder/static/lib/rrweb/js/index.min.js",
+            "crash_recorder/static/src/js/rrweb_field.js",
+            "crash_recorder/static/src/js/rrweb_systray.js",
+            "crash_recorder/static/src/scss/crash_recorder_systray.scss",
+        ],
+        "web.assets_qweb": [
+            "crash_recorder/static/src/xml/*.xml",
+        ],
+    },
+    "author": "Joren Van Onder, Mihran Thalhath",
     "license": "LGPL-3",
 }

@@ -1,62 +1,58 @@
-// Copyright (c) 2021, Joren Van Onder <joren@jvo.sh>
-//
-// This file is part of crash-recorder.
-//
-// crash-recorder is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// crash-recorder is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with crash-recorder.  If not, see <https://www.gnu.org/licenses/>.
-odoo.define('crash_recorder.rrweb', function (require) {
-    "use strict";
+/** @odoo-module **/
 
-    var rpc = require("web.rpc");
-    var CrashManager = require("web.CrashManager").CrashManager;
+import {RPCErrorDialog} from "@web/core/errors/error_dialogs";
+import {patch} from "@web/core/utils/patch";
+import rpc from "web.rpc";
 
-    CrashManager.include({
-        init: function () {
-            this._super.apply(this, arguments);
-            this.rrwebBufferA = [];
-            this.rrwebBufferB = [];
-            this.rrwebWritingToBufferA = true;
 
-            var self = this;
-            rrweb.record({
-                emit(event, isCheckout) {
-                    if (isCheckout) {
-                        if (self.rrwebWritingToBufferA) {
-                            self.rrwebBufferB = [];
-                        } else {
-                            self.rrwebBufferA = [];
-                        }
+/**
+ * Start recording when Odoo loads
+ * In Odoo 14, CrashManager was used to handle this, but I am really not sure
+ * about how to handle this in Odoo 15+. So trying this approach for now.
+ * TODO: improve the code by moving this to a specific Odoo class
+ */
+let rrwebBufferA = [];
+let rrwebBufferB = [];
+let rrwebWritingToBufferA = true;
 
-                        self.rrwebWritingToBufferA = !self.rrwebWritingToBufferA;
-                    }
+rrweb.record({
+    emit(event, isCheckout) {
+        if (isCheckout) {
+            if (rrwebWritingToBufferA) {
+                rrwebBufferB = [];
+            } else {
+                rrwebBufferA = [];
+            }
 
-                    if (self.rrwebWritingToBufferA) {
-                        self.rrwebBufferA.push(event);
-                    } else {
-                        self.rrwebBufferB.push(event);
-                    }
-                },
-                checkoutEveryNms: 30 * 1000, // checkout every 30 seconds
-            });
+            rrwebWritingToBufferA = !rrwebWritingToBufferA;
+        }
+
+        if (rrwebWritingToBufferA) {
+            rrwebBufferA.push(event);
+        } else {
+            rrwebBufferB.push(event);
+        }
+    },
+    checkoutEveryNms: 30 * 1000,  // checkout every 30 seconds
+});
+
+// Patch RPCErrorDialog to save events when an error occurs
+patch(
+    RPCErrorDialog.prototype,
+    "crash_recorder/static/src/js/rrweb.js",
+    {
+        setup() {
+            this._super();
+            this.show_error();
         },
 
-        rrwebSaveEvents: function(traceback) {
+        rrwebSaveEvents(traceback) {
             var toSave = [];
 
-            if (self.rrwebWritingToBufferA) {
-                toSave = this.rrwebBufferB.concat(this.rrwebBufferA);
+            if (rrwebWritingToBufferA) {
+                toSave = rrwebBufferB.concat(rrwebBufferA);
             } else {
-                toSave = this.rrwebBufferA.concat(this.rrwebBufferB);
+                toSave = rrwebBufferA.concat(rrwebBufferB);
             }
 
             rpc.query({
@@ -70,20 +66,13 @@ odoo.define('crash_recorder.rrweb', function (require) {
          * A delayed wrapper around rrwebSaveEvents to still capture
          * part of the error screen.
          */
-        rrwebSaveEventsSoon: function(traceback) {
+        rrwebSaveEventsSoon(traceback) {
             setTimeout(() => this.rrwebSaveEvents(traceback), 3000);
         },
 
-        // show_warning: function (error, options) {
-        //     var res = this._super.apply(this, arguments);
-        //     this.rrwebSaveEventsSoon();
-        //     return res;
-        // },
-
-        show_error: function (error) {
-            var res = this._super.apply(this, arguments);
-            this.rrwebSaveEventsSoon(error.traceback);
-            return res;
+        show_error() {
+            const traceback = this.props.data.debug;
+            this.rrwebSaveEventsSoon(traceback);
         },
-    });
-});
+    }
+);

@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <templates>
+
     <t t-name="crash_recorder.recording_notice">
-        <li>
-            <a class="dropdown-toggle o-no-caret" data-toggle="dropdown"
-                data-display="static" aria-expanded="false" title="Crash Recording"
-                href="#" role="button">
+        <div class="o_mail_systray_item dropdown">
+            <a class="dropdown-toggle o-no-caret o-dropdown--narrow"
+                data-toggle="dropdown" data-display="static" aria-expanded="false"
+                title="Crash Recording" href="#" role="button">
                 <i class="fa fa-video-camera" role="img" aria-label="Crash Recording" />
             </a>
             <div
@@ -18,6 +19,7 @@
                         webcam or sound recordings.</p>
                 </span>
             </div>
-        </li>
+        </div>
     </t>
+
 </templates>

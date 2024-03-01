@@ -53,7 +53,7 @@ class RRWebRecording(models.Model):
     @api.autovacuum
     def _gc_recordings(self):
         """Avoid bloating the database with lots of recordings."""
-        limit_date = fields.Datetime.subtract(fields.Datetime.now(), days=30)
+        limit_date = fields.Datetime.subtract(fields.Datetime.now(), days=3)
         to_unlink = self.search([("create_date", "<", limit_date)])
         _logger.info(
             "Deleting %s crash recordings older than %s", len(to_unlink), limit_date
