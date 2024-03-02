@@ -1,49 +1,28 @@
-// Copyright (c) 2021, Joren Van Onder <joren@jvo.sh>
-//
-// This file is part of crash-recorder.
-//
-// crash-recorder is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// crash-recorder is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with crash-recorder.  If not, see <https://www.gnu.org/licenses/>.
-odoo.define('crash_recorder.rrweb_field', function (require) {
-    var core = require('web.core');
-    var basic_fields = require('web.basic_fields');
-    var registry = require('web.field_registry');
+/** @odoo-module **/
 
-    var _lt = core._lt;
+import { BinaryField } from "@web/views/fields/binary/binary_field";
+import { onMounted, useRef } from "@odoo/owl";
+import { registry } from "@web/core/registry";
 
-    var RRWebPlayer = basic_fields.FieldBinaryFile.extend({
-        description: _lt("rrweb recording player"),
-        supportedFieldTypes: ['binary'],
-        template: 'FieldRRWeb',
-        events: {}, // TODO
+export class RRWebPlayer extends BinaryField {
 
-        /**
-         * @override
-         */
-        init: function () {
-            this._super.apply(this, arguments);
-        },
+    setup() {
+        this._field_rrweb = useRef('field_rrweb');
+        onMounted(this.onMounted);
+    }
 
-        /**
-         * @override
-         */
-        _render: function () {
+    onMounted() {
+        this.initializeRRWebPlayer();
+    }
+
+    initializeRRWebPlayer() {
+        if (this._field_rrweb && this._field_rrweb.el) {
             setTimeout(() => { // TODO
-                fetch(`/web/content/rrweb.recording/${this.recordData.id}/events`)
+                fetch(`/web/content/rrweb.recording/${this.props.record.data.id}/events`)
                     .then((response) => response.json())
                     .then((events) => {
                         new rrwebPlayer({
-                            target: this.$el[0],
+                            target: this._field_rrweb.el,
                             data: {
                                 events: events.toSave,
                                 autoPlay: true
@@ -52,7 +31,10 @@ odoo.define('crash_recorder.rrweb_field', function (require) {
                     });
             }, 2000);
         }
-    });
+    }
 
-    registry.add('rrweb_player', RRWebPlayer);
-});
+}
+
+RRWebPlayer.template = "FieldRRWeb";
+
+registry.category("fields").add("rrweb_player", RRWebPlayer);

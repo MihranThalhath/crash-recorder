@@ -4,7 +4,7 @@
     <t t-name="crash_recorder.recording_notice">
         <div class="o_mail_systray_item dropdown">
             <a class="dropdown-toggle o-no-caret o-dropdown--narrow"
-                data-toggle="dropdown" data-display="static" aria-expanded="false"
+                data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false"
                 title="Crash Recording" href="#" role="button">
                 <i class="fa fa-video-camera" role="img" aria-label="Crash Recording" />
             </a>
@@ -15,8 +15,8 @@
                     <p>Actions leading up to a crash are recorded and reported to the
                         administrator.</p>
                     <p>This consists of a 30 second to 3 minutes recording of Odoo,
-                        prior to which the error occurs. It does <b>not</b> include any
-                        webcam or sound recordings.</p>
+                        prior to which the error occurs. It does not include any webcam
+                        or sound recordings.</p>
                 </span>
             </div>
         </div>

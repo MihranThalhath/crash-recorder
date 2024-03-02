@@ -18,7 +18,7 @@
     "name": "Crash Recorder",
     "category": "Tools",
     "summary": "Automatically record user actions leading to errors.",
-    "version": "15.0.1.0.0",
+    "version": "16.0.1.0.0",
     "depends": ["web"],
     "data": [
         "views/rrweb_recording_views.xml",
@@ -33,8 +33,6 @@
             "crash_recorder/static/src/js/rrweb_field.js",
             "crash_recorder/static/src/js/rrweb_systray.js",
             "crash_recorder/static/src/scss/crash_recorder_systray.scss",
-        ],
-        "web.assets_qweb": [
             "crash_recorder/static/src/xml/*.xml",
         ],
     },
