@@ -1,9 +1,8 @@
 /** @odoo-module **/
 
-import {RPCErrorDialog} from "@web/core/errors/error_dialogs";
-import {patch} from "@web/core/utils/patch";
-import rpc from "web.rpc";
-
+import { RPCErrorDialog } from "@web/core/errors/error_dialogs";
+import { patch } from "@web/core/utils/patch";
+import { useService } from "@web/core/utils/hooks";
 
 /**
  * Start recording when Odoo loads
@@ -39,10 +38,10 @@ rrweb.record({
 // Patch RPCErrorDialog to save events when an error occurs
 patch(
     RPCErrorDialog.prototype,
-    "crash_recorder/static/src/js/rrweb.js",
     {
         setup() {
-            this._super();
+            super.setup();
+            this.orm = useService("orm");
             this.show_error();
         },
 
@@ -55,11 +54,11 @@ patch(
                 toSave = rrwebBufferA.concat(rrwebBufferB);
             }
 
-            rpc.query({
-                model: "rrweb.recording",
-                method: "create",
-                args: [{events: JSON.stringify({toSave}), error: traceback}],
-            });
+            this.orm.call(
+                "rrweb.recording",
+                "create",
+                [{events: JSON.stringify({toSave}), error: traceback}],
+            );
         },
 
         /**

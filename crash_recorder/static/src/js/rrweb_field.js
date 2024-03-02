@@ -1,6 +1,6 @@
 /** @odoo-module **/
 
-import { BinaryField } from "@web/views/fields/binary/binary_field";
+import { BinaryField, binaryField } from "@web/views/fields/binary/binary_field";
 import { onMounted, useRef } from "@odoo/owl";
 import { registry } from "@web/core/registry";
 
@@ -18,7 +18,7 @@ export class RRWebPlayer extends BinaryField {
     initializeRRWebPlayer() {
         if (this._field_rrweb && this._field_rrweb.el) {
             setTimeout(() => { // TODO
-                fetch(`/web/content/rrweb.recording/${this.props.record.data.id}/events`)
+                fetch(`/web/content/rrweb.recording/${this.props.record.model.config.resId}/events`)
                     .then((response) => response.json())
                     .then((events) => {
                         new rrwebPlayer({
@@ -37,4 +37,9 @@ export class RRWebPlayer extends BinaryField {
 
 RRWebPlayer.template = "FieldRRWeb";
 
-registry.category("fields").add("rrweb_player", RRWebPlayer);
+export const rrWebPlayer = {
+    ...binaryField,
+    component: RRWebPlayer,
+};
+
+registry.category("fields").add("rrweb_player", rrWebPlayer);

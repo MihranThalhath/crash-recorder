@@ -18,7 +18,7 @@
     "name": "Crash Recorder",
     "category": "Tools",
     "summary": "Automatically record user actions leading to errors.",
-    "version": "16.0.1.0.0",
+    "version": "17.0.1.0.0",
     "depends": ["web"],
     "data": [
         "views/rrweb_recording_views.xml",

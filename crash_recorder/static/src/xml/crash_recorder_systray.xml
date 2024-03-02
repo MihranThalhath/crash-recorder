@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <templates>
 
-    <t t-name="crash_recorder.recording_notice">
+    <t t-name="crash_recorder.recording_notice" owl="1">
         <div class="o_mail_systray_item dropdown">
             <a class="dropdown-toggle o-no-caret o-dropdown--narrow"
                 data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false"

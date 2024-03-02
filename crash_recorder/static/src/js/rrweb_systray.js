@@ -1,13 +1,12 @@
 /** @odoo-module **/
 
-import SystrayMenu from 'web.SystrayMenu';
-import Widget from 'web.Widget';
+import { Component } from '@odoo/owl';
+import { registry } from "@web/core/registry";
 
-const RecordingNoticeWidget = Widget.extend({
-    template: 'crash_recorder.recording_notice',
-    name: 'recording_notice',
-});
+export class RecordingNoticeWidget extends Component { }
+RecordingNoticeWidget.template = "crash_recorder.recording_notice";
 
-SystrayMenu.Items.push(RecordingNoticeWidget);
-
-export default RecordingNoticeWidget;
+export const systrayItem = {
+    Component: RecordingNoticeWidget,
+};
+registry.category("systray").add("crash_recorder.recording_notice", systrayItem, { sequence: 100 });
